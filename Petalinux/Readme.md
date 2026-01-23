@@ -89,30 +89,29 @@ $ petalinux-config --get-hw-description /path/to/xsa
 
 進入 /petalinux/project-spec/meta-user/recipes-bsp/device-tree/files/ 裡面會有兩個檔案，選擇 system-user.dtsi 即可。
 
-```dts
-/include/ "system-conf.dtsi"
-&amba {
-	xlnk {
-		compatible = "xlnx,xlnk-1.0";
-	};
-};
-/{
-   reserved-memory {
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
-		reserved: buffer@0x10000000 {
-			 no-map;
-			 reg = <0x10000000 0x0DF9E000>;
-		};
-	};
+這邊可以加入對額外的設備的功能，像是 AXI 的擴充之類的。
 
-	reserved-driver@0 {
-		compatible = "xlnx,reserved-memory";
-		memory-region = <&reserved>;
-	};
-};
+當我們選擇好 petalinux 的 Hardware 時本身就會有對應的 dtsi 產出，這裡不是自己寫設備樹，而是額外增加的。
+
+</br>
+
+若是想單獨先檢查設備樹可以使用：
+
+```bash
+$ petalinux-build -c device-tree
 ```
+
+但要先記得 `petalinux-config`
+
+之後會產出 system.dtb 這是給機器看的，我們可以利用 device-tree-compiler 反編譯出來 dtsi。
+
+```bash
+$ sudo apt install -y device-tree-compiler
+
+$ dtc -I dtb -O dts -o out.dts system.dtb
+```
+
+</br>
 
 ---
 
@@ -143,19 +142,54 @@ https://petalinux.xilinx.com/sswreleases/rel-v2020/downloads/
 在 image/linux 資料夾中輸入：
 
 ```bash
-$ peatlinux-package --boot --u-boot --fpga --force
+$ petalinux-package --boot --fsbl --pmufw --u-boot --fpga --force
 ```
+
+成功後會看到：images/linux/BOOT.BIN
 
 須注意在 vivado export 中需要 include bitstream。
 
 </br>
 
-打包成功後會出現三個文件：boot.scr、BOOT.BIN、image.ub。
+請先將 SD 卡分割好：
 
-1. 若是利用 SD 卡先進行測試的話，複製到 SD 卡中即可。
-   - 須注意 SD 卡需要格式化成 FAT 格式。
+1. rootfs : 放置 root file system
+	- images/linux/rootfs.tar.gz
+	- 放入後記得解壓縮
 
-2. 可以利用 vitis 繼續往下開發
+2. boot : 放置開機用
+	- images/linux/BOOT.BIN
+	- images/linux/image.ub
+
+對應的磁區會有不一樣的分割設定，上網找就好。
+
+若是不知道怎麼用，請參考 DE10-Nano 的燒錄 SD Linux image 方式。
+
+</br>
+
+---
+
+</br>
+
+### Step 6. 開機
+
+開機後其實還不會先進入 rootfs 的 user space ，會在 boot 中。
+
+此時我們可以先利用 CLI 的輸入繼續開機，先測試是否東西都正確。
+
+```bash
+ZynqMP> mmc dev 0
+ZynqMP> mmc rescan
+ZynqMP> ls mmc 0:1
+
+ZynqMP> load mmc 0:1 0x8000000 image.ub
+
+ZynqMP> setenv bootargs 'console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait rootfstype=ext4'
+
+ZynqMP> bootm 0x8000000
+```
+
+若是成功就會要求登入 root
 
 </br>
 
@@ -163,6 +197,18 @@ $ peatlinux-package --boot --u-boot --fpga --force
 
 以上就是整個 petalinux 編譯出一個 yocto linux kernel 的使用方法。
 
-接下來就是進入 vitis 撰寫我們的 APP 即可。
+</br>
+
+</br>
+
+# Petalinux 開發
+
+基本上就跟 Yocto 開發一模一樣。
+
+</br>
+
+## 創建 meta-layer
+
+
 
 </br>
