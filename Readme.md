@@ -17,20 +17,36 @@ Xilinx 的軟體本身可以在不同的平台進行設計，官方都有給出�
 
 剛接觸 xilinx 時一定會覺得很麻煩幹嘛分那麼多 IDE 那麼多介面，別急聽我娓娓道來 ～
 
-首先我們正在學習與實做的是 FPGA + Linux 的開發板，兩者之間各有它的好處那何不把他們合再一起。
-
-在之前我碰過的板子是 Intel 的 FPGA 開發板，在舊環境中我們知道要用 Quartus 設計 FPGA，那在 xilinx 就只是換成 vivado 而已。
-
-那在這之後我們可能要設計我們的軟核像是 Nios II 之類的用的就是 eclipse，在這裡換成 vitis。
-
-那再加上 linux 對多核心管理呢，那就用 petalinux，第一次聽到可能覺得很神奇 xilinx 為了 linux 推出了自己的套件，其實不然， petalinux 就只是包了一層專屬於 xilinx 的 yocto 而已。（若是對 yocto 不熟的話建議可以去 Bootlin 看看）
+首先我們正在學習與實做的是 FPGA + Linux + APP 的開發板，兩者之間各有它的好處那何不把他們合再一起。
 
 </br>
 
-小總結一下：
-1. vivado：FPGA 主要編輯環境。
-2. vitis：編寫軟核功能環境（Application）。
-3. petalinux：設計與編譯 linux kernel 的環境。
+讓我們先分清楚三者之間的用途：
+
+1. Vivado 的工作是把「你想要的硬體系統」做出來。
+2. Vitis 本質是「軟體開發 + 平台整合」，可以分三類情境：Bare-metal、FreeRTOS 與 Linux。
+3. PetaLinux 是「把 Linux 為你的板子客製化」的整合工具。
+
+</br>
+
+那當我們要開始使用時該如何利用這三種不同的 IDE，以我的開發經驗來說，我習慣用以下的 wok-flow：
+
+![xilinx ide work flow](/images/xilinx-workflow.png)
+
+</br>
+
+文字敘述一下：
+
+先用 Vivado 將我們需要的硬體設計好，包括 PS 與 PL 端，甚至我們需要用到 IP 也一律先做好，再全數編譯完成後 ( Run Implementation ) 輸出 XSA 文件 ( 需要包含 Bitstream )，這就是我們的硬體描述文件了。
+
+接下來，在正式進入 Linux 之前我們可以先用 Vitis 測試一下我們剛剛所設計好的硬體環境，通常如果有問題這邊就會有了。透過導入設計好的 XSA 文件，我們可以選擇需要的系統平台 ( Bare-metal、FreeRTOS 與 Linux，基本 Bare-metal 就夠了 )，在測試完之後就可以先大致確認這個 FPGA 硬體平台是 OK 的。
+
+最後我們可以開始撰寫需要的 Linux 系統了，在搭建好 Petalinux 環境後，我們可以更改設備數或是像 u-boot 這種文件，誘惑是可以開始加入自己的 APP，最後編譯與打包我們的完整 image 給 SD 卡或是其他燒錄方式。
+
+然而撰寫 Linux APP 的方式不只一種，我們可以透過 Petalinux 提供的 SDK 功能將平台的 Linux 底層資訊給 Vitis 做上層 User Space 的開發。
+
+
+</br>
 
 # Vivado
 
@@ -45,6 +61,8 @@ Version : 2022.2
 </br>
 
 # Petalinux
+
+Version : 2020.1
 
 由於這是 Linux 開發，所以先切到別的[章節](Petalinux/Readme.md)做說明
 
