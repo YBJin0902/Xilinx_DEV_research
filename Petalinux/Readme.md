@@ -212,3 +212,17 @@ ZynqMP> bootm 0x8000000
 
 
 </br>
+
+## 在 Petalinux 中利用 rootfs 加入測試工具
+
+先在工作目錄輸入：
+
+```bash
+$ petalinux-config -c rootfs
+```
+
+會出現選單，根據自己的需求加入就可以。
+
+
+
+</br>
