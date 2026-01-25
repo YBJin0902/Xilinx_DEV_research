@@ -160,6 +160,7 @@ $ petalinux-package --boot --fsbl --pmufw --u-boot --fpga --force
 2. boot : 放置開機用
 	- images/linux/BOOT.BIN
 	- images/linux/image.ub
+	- images/linux/boot.scr
 
 對應的磁區會有不一樣的分割設定，上網找就好。
 
@@ -171,9 +172,9 @@ $ petalinux-package --boot --fsbl --pmufw --u-boot --fpga --force
 
 </br>
 
-### Step 6. 開機
+### Step 6. 手動開機
 
-開機後其實還不會先進入 rootfs 的 user space ，會在 boot 中。
+若是在沒有 boot.scr 的情況下，開機後其實還不會先進入 rootfs 的 user space ，會在 boot 中。
 
 此時我們可以先利用 CLI 的輸入繼續開機，先測試是否東西都正確。
 
@@ -207,8 +208,33 @@ ZynqMP> bootm 0x8000000
 
 </br>
 
-## 創建 meta-layer
+## 創建項目
 
+### APPS
+
+```bash
+$ petalinux-create -t apps --template c --name <name> --enable
+```
+
+### Kernel Model
+
+```bash
+$ petalinux-create -t modules --name <name> --enable
+```
+
+### Script
+
+```bash
+$ petalinux-create -t apps --template install --name <name> --enable
+```
+
+</br>
+
+這邊創建成功之後會提示整個 recipes 的路徑位置。
+
+可以利用 `petalinux-config -c rootfs` 將 APP 加入到 rootfs images 中，若有加 `--enable` 其實也會直接加入。
+
+在專案目錄中同時會生成一個 Readme 也可以跟著做就好。
 
 
 </br>
