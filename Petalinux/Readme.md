@@ -119,6 +119,10 @@ $ dtc -I dtb -O dts -o out.dts system.dtb
 
 </br>
 
+若要用 SD 卡開機請見 [SD 卡開機](#sd-卡開機)
+
+</br>
+
 ---
 
 </br>
@@ -218,12 +222,12 @@ ZynqMP> bootm 0x8000000
 
 以下分成各章節說明，會牽扯到 linux 各項開發建議先擁有基本知識：
 
-### [創建專案](#創建專案)
-### [設備樹]()
-### [User Space APP]()
-### [Linux Kernel Model]()
-### [執行腳本]()
-### [編譯]()
+### [創建專案](#創建項目)
+### [設備樹](#設備樹-1)
+### [User Space APP](#user-space-app-2)
+### [Linux Kernel Model](#linux-kernel-model-1)
+### [執行腳本](#執行腳本-1)
+### [編譯](#編譯-1)
 
 </br>
 
@@ -280,6 +284,126 @@ $ petalinux-create -t apps --template install --name <name> --enable
 ![petalinux root filesystem packages](images/petalinux-rootfs-filesystem-packages.png)
 
 </br>
+
+# 設備樹
+
+Petalinux 本身會透過 XSA 生成一個 device tree 但是我們不能直接先更改這個設備樹（system.dtb），要透過 `meta-user/device-tree/files/system-user.dtsi` 去新增內容。
+
+</br>
+
+#### SD 卡開機
+
+以我們需要的 SD 卡開機 為例：
+
+```dts
+&sdhci0 {
+    status = "okay";
+    disable-wp;
+    no-1-8-v;
+};
+
+&sdhci1 { 
+    status = "okay";
+    disable-wp;
+    no-1-8-v;
+};
+```
+
+在設樹中新增 SD 卡啟用的相關設定，否則無法利用 SD 卡中的 rootfs 分割磁區。
+
+</br>
+
+## 設備樹說明
+
+嵌入式 Linux 系統中用於描述硬體配置的樹狀資料結構，旨在將硬體描述與 Linux 核心驅動程式分離。它包含節點（Nodes）和屬性（Properties），用以定義 CPU、記憶體、中斷控制器、總線（如 I2C, SPI）及周邊設備的連接關係與資源。 
+
+### 設備樹的主要組成部分
+
+1. DTS（Device Tree Source）檔案：
+   - DTS 檔案是裝置樹的原始碼文件，採用 ASCII 文字格式編寫，檔案副檔名為 .dts。
+   - DTS 檔案透過樹狀結構描述板級設備訊息，如 CPU 數量、記憶體基底位址、週邊介面（如 IIC、SPI）上連接的設備等。
+   - 每個設備在 DTS 檔案中表示為一個節點，節點透過屬性來描述設備訊息，屬性是鍵值對的形式。
+
+2. DTSI（Device Tree Include）文件：
+   - DTSI 檔案類似 C 語言中的頭文件，用於描述 SoC 層級的內部週邊資訊，如 CPU 架構、主頻、外設暫存器位址範圍等。
+   - DTS 文件可以引用 DTSI 文件，以減少程式碼冗餘，以便於維護和共用。
+
+3. DTC（Device Tree Compiler）工具：
+   - DTC 工具用於將DTS檔案編譯成二進位格式的 DTB（Device Tree Blob）檔案。
+   - DTC 工具的原始碼位於 Linux 核心的 scripts/dtc 目錄下。
+
+4. DTB（Device Tree Blob）檔案：
+   - DTB 檔案是DTS檔案編譯後的二進位文件，由 Linux 核心解析。
+   - DTB 檔案包含了設備樹的完整訊息，用於在系統啟動階段配置和初始化硬體設備。
+
+</br>
+
+我們是不用自己把完整的週邊或是 CPU 寫出來，他會根據我們的 XSA 文件先生成好出來。
+
+但建議還是要懂一點語法以便後續自己編輯。
+
+</br>
+
+其語法如：
+
+```dts
+peripheral_name@address {
+    compatible = " ";
+    reg = < >;
+    interrupts = < >;
+    clocks = < >;
+    status = " ";
+};
+```
+
+- compatible :
+   - 告訴 kernel：「我這顆硬體是誰」
+   - Kernel 會去找 of_device_id 表裡有沒有對得上的 driver
+   - compatible = "xlnx,axi-gpio-2.0", "xlnx,xps-gpio-1.00.a";
+
+- reg
+   - 記憶體映射
+   - 格式：addr_hi addr_lo size_hi size_lo
+   - reg = <0x00 0xa0000000 0x00 0x10000>;
+
+- interrupts
+   - 週邊怎麼丟中斷
+   - 格式：type irq_number flags
+   - interrupt-parent = <&gic>; </br> interrupts = <0 89 4>;
+
+- clocks
+   - 週邊時脈
+   - clocks = <&clkc 15>; </br> clock-names = "s_axi_aclk";
+
+- status
+   - 開或關
+   - okay / disabled
+
+</br>
+
+# User Space APP
+
+
+
+
+</br>
+
+# Linux Kernel Model
+
+
+
+
+</br>
+
+# 執行腳本
+
+
+
+
+</br>
+
+# 編譯
+
 
 
 
