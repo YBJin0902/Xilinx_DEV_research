@@ -216,9 +216,22 @@ ZynqMP> bootm 0x8000000
 
 </br>
 
-## 創建項目
+以下分成各章節說明，會牽扯到 linux 各項開發建議先擁有基本知識：
 
-### APPS
+### [創建專案](#創建專案)
+### [設備樹]()
+### [User Space APP]()
+### [Linux Kernel Model]()
+### [執行腳本]()
+### [編譯]()
+
+</br>
+
+# 創建項目
+
+在 Petalinux 中可以使用工具新增各項需要的功能包括：
+
+### User Space APP
 
 ```bash
 $ petalinux-create -t apps --template c --name <name> --enable
@@ -240,22 +253,29 @@ $ petalinux-create -t apps --template install --name <name> --enable
 
 這邊創建成功之後會提示整個 recipes 的路徑位置。
 
-可以利用 `petalinux-config -c rootfs` 將 APP 加入到 rootfs images 中，若有加 `--enable` 其實也會直接加入。
-
-在專案目錄中同時會生成一個 Readme 也可以跟著做就好。
-
+切記不要直接自己寫 recipes 專案，否則 Petalinux 會報錯。
 
 </br>
 
-## 在 Petalinux 中利用 rootfs 加入測試工具
+創建完成後可以使用 `petalinux-config -c rootfs` 將創建好的 recipes 加入到 image 中，以下說明：
 
-先在工作目錄輸入：
+![petalinux-config rootfs UI](images/petalinux-config-rootfs-UI.png)
 
-```bash
-$ petalinux-config -c rootfs
-```
+選擇 apps / modules / user packages 找到自己的即可。
 
-會出現選單，根據自己的需求加入就可以。
+</br>
+
+需要先注意，在創建完成後專案的 `meta-user/conf/user-rootfsconfig` 會出現相對應的 config APP 名稱，有了才會出現在 `petalinux-config -c rootfs` 上述畫面中。
+
+若一開始沒有可以先來這邊檢查，示意圖：
+
+![user-rootfsconfig 示意圖](images/user-rootfsconfig示意圖.png)
+
+</br>
+
+## Filesystem Packages 說明
+
+在整個 Petalinux 系統中只有提供基本能動的動態與靜態函式庫
 
 
 
