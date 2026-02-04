@@ -64,6 +64,8 @@ Step 1. 先至官網下載[安裝包](https://www.xilinx.com/support/download/in
 
 註：網頁的 Vivado Archive 可以選以前的版本。
 
+</br>
+
 ![vivado 2022.2 下載](images/vivado-20222-下載.png)
 
 </br>
@@ -135,13 +137,41 @@ $ vitis&
 
 # Petalinux
 
-### 安裝：
-
 Version : 2020.1
 
-由於這是 Linux 開發，所以先切到別的[章節](Petalinux/Readme.md)做說明
+### 安裝：
+
+Step 1. 安裝
+
+[安裝](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-design-tools/archive.html)自己想要的版本，但需要注意根據自己載的 Petalinux Version 你的 Kernel 跟 u-boot 會也需要對照版本。
 
 </br>
 
+![Petalinux 2020.1 下載](images/Petalinux-20201-下載.png)
 
+</br>
+
+以我所安裝的 Petalinux 2020.1 來說：
+* [Kernel](https://github.com/Xilinx/linux-xlnx/tree/xlnx_rebase_v5.4) : v5.4
+* [u-boot](https://github.com/Xilinx/u-boot-xlnx/tree/xlnx_rebase_v2020.01) : v2020.1
+
+以上兩個包都可以在 Xilinx 的 Github 上倒找到相對應的安裝包。
+
+</br>
+
+執行 Petalinux 的安裝包跟上述都一樣，這邊是建議使用 Docker 將其包起來會比較好，因為他會需要更改很多環境與電腦資源，所以最好獨立出來。
+
+[安裝教學](https://www.bilibili.com/video/BV1qd4y1o7C9/?spm_id_from=333.337.search-card.all.click&vd_source=c0216bc2cffca6d8fd82a48943a835d7)
+
+</br>
+
+由於 Petalinux 本身就是 Yocto 開發的一種，那 Yocto 又是以肥而出名，所以最好可以先將 sstate 與 downloads 安裝好，讓 Yocto 編譯時更快更不會出錯。
+
+相關資源都在官網上。
+
+</br>
+
+### [教學](Petalinux/Readme.md)
+
+</br>
 
