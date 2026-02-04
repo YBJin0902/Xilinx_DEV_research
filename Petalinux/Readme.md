@@ -20,7 +20,7 @@ Petalinux 是一個由 AMD 開發的嵌入式 Linux 開發套件，專為在 AMD
 
 ### Step 1. 安裝
 
-基本上跟著官網一步一步安裝即可。
+基本上跟著上一頁的教學一步一步安裝即可。
 
 須注意環境的建立，petalinux 基本上有自己的語法 `petalinux-config` 可以查看。
 
@@ -58,6 +58,12 @@ $ petalinux-config --get-hw-description /path/to/xsa
 ```
 
 後面的 `/path/to/xsa` 直接指向 xsa 的資料夾即可。
+
+</br>
+
+![etalinux-config 基本UI](images/petalinux-config-基本UI.png)
+
+</br>
 
 ### Step 2-3. 設定專案
 
@@ -205,6 +211,8 @@ ZynqMP> bootm 0x8000000
 # Petalinux 開發
 
 基本上就跟 Yocto 開發一模一樣。
+
+只是需要注意的是 Petalinux 是有經過 xilinx 加工過後的，所以我們不能項以前一樣自由的加 recipes 而是需要透過 Petalinux 所提供的工具來加入才可以。
 
 </br>
 
