@@ -275,7 +275,11 @@ $ petalinux-create -t apps --template install --name <name> --enable
 
 ## Filesystem Packages 說明
 
-在整個 Petalinux 系統中只有提供基本能動的動態與靜態函式庫
+在整個 Petalinux 系統中只有提供基本能動的動態與靜態函式庫，所以如果自己的 APP 有需要其他的函式庫要先加入，這邊就不詳細說明各項都 Google 的到
+
+![petalinux root filesystem packages](images/petalinux-rootfs-filesystem-packages.png)
+
+</br>
 
 
 
